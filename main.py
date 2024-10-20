@@ -1,5 +1,5 @@
 import pygame
-from Map_game import map
+from map_game import map
 from pygame.locals import Rect
 
 #display
