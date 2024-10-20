@@ -7,8 +7,6 @@ from pygame.locals import Rect
 WIDTH, HEIGHT = 1200, 600
 display = pygame.display.set_mode((WIDTH, HEIGHT))
 
-#gamer_skin
-
 #colors
 
 BLACK  = (0, 0, 0)
@@ -42,7 +40,6 @@ def collide_player_rects(gamer, rects):
         if pygame.Rect.colliderect(gamer, mane):
             return True
     return False
-
 
 def x_change_gamer():
     gamer.x -= x_change
