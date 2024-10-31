@@ -39,6 +39,7 @@ space_power_2 = True
 space_power_3 = True
 show_bridge = False
 class_hint_show = False
+Miss_Trap_Ammo = False
 gameover = False
 game = True
 
@@ -96,7 +97,6 @@ def space_xy():
 direction = "right"
 
 while game:
-    #QUIT
     display.fill(BLACK)
 
     for event in pygame.event.get():
@@ -104,8 +104,7 @@ while game:
             game = False
 
     keys = pygame.key.get_pressed()
-
-    # RIGHT
+    
     if keys[pygame.K_d] :
         gamer.x += 5
         gamer.y += 0
@@ -113,7 +112,7 @@ while game:
         x_change = 5
         y_change = 0
         direction = "right"
-    # LEFT
+    
     if keys[pygame.K_a] :
         gamer.x += -5
         gamer.y += 0
@@ -218,6 +217,15 @@ while game:
     if collide_player_trap(Trap_Ammo[0],  map.levels[1]["wall"]):
         Trap_Ammo_x = 125
 
+    if gamer.y > 500 and keys[pygame.K_SPACE]:
+        pygame.time.wait(50)
+        for i in range (40) :
+            gamer.x += 0
+            gamer.y += -1
+
+            x_change = 0
+            y_change = -1
+
     if collide_player_rects(gamer,  Trap_Ammo) :
         gameover = True
 
@@ -255,6 +263,9 @@ while game:
         game = False
 
     pygame.display.update()
-    if not game:
-        pygame.time.wait(10000)
+    if not game and event.type != pygame.QUIT:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game = False
+        
     clock.tick(50)    
