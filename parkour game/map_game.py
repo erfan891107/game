@@ -66,5 +66,4 @@ map.levels[1]["score"] = [Rect ([850, 165, 25, 25])]
 
 map.levels[1]["finish"] = [Rect ([1075, 400, 50, 50])]
 
-map.levels[1]["trap"] = [Rect ([55, 500, 100, 25])]
-
+map.levels[1]["trap"] = [Rect ([55, 450, 100, 100])]
