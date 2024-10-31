@@ -3,12 +3,8 @@ from map_game import map
 from pygame.locals import Rect
 pygame.init()
 
-#display
-
 WIDTH, HEIGHT = 1200, 600
 display = pygame.display.set_mode((WIDTH, HEIGHT))
-
-#colors
 
 BLACK  = (0, 0, 0)
 RED = (255, 0, 0)
@@ -30,6 +26,7 @@ clock = pygame.time.Clock()
 x_change, y_change = 0, 0
 score_number = 0
 wait_time = 0
+x, y = 0, 0
 
 Trap_Ammo_x = 125
 Trap_Ammo = [Rect ([Trap_Ammo_x, 500, 10, 5])]
@@ -39,11 +36,8 @@ space_power_2 = True
 space_power_3 = True
 show_bridge = False
 class_hint_show = False
-Miss_Trap_Ammo = False
 gameover = False
 game = True
-
-x, y = 0, 0
 
 score = pygame.image.load("score.PNG")
 score = pygame.transform.scale(score,(25, 25))
@@ -78,16 +72,16 @@ def collide_player_trap(Trap_Ammo, rects):
             return True
     return False
 
-def x_change_gamer():
+def xy_change_gamer():
     gamer.x -= x_change
     gamer.y -= y_change
     
 def not_gravity():
-    for i in range (5) :
+    for _ in range (5) :
         gamer.y -= 1
 
 def space_xy():
-    for i in range (30) :
+    for _ in range (30) :
         gamer.x += 0
         gamer.y += -1
 
@@ -123,47 +117,38 @@ while game:
 
     player = plot_player(direction)
 
-    if space_power_1 == True and keys[pygame.K_e] and direction == "right":
-    
-        gamer.x += 150
-        x_change = 150
-        space_power_1 = False
+    if class_hint_show == True :
+        if space_power_1 == True and keys[pygame.K_e] and direction == "right":
+            
+            for _ in range (150) :
+                gamer.x += 1
+                x_change = 1
+                if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer,  map.levels[1]["mane_1"]) or collide_player_rects(gamer,  map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_1"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) :
+                    gamer.x -= 1
+                    x_change = -1    
+            space_power_1 = False
 
-    if space_power_1 == True and keys[pygame.K_e] and direction == "left":
-        gamer.x -= 150
-        x_change = -150
-        space_power_1 = False
+        if space_power_1 == True and keys[pygame.K_e] and direction == "left":
+            for _ in range (150) :
+                gamer.x -= 1
+                x_change = -1
+                if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer,  map.levels[1]["mane_1"]) or collide_player_rects(gamer,  map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_1"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) :
+                    gamer.x += 1
+                    x_change = 1
+            space_power_1 = False
 
     gamer.x %= WIDTH
     gamer.y %= HEIGHT
     
-    if collide_player_rects(gamer,  map.levels[1]["wall"]):
-        x_change_gamer()
-    
-    if collide_player_rects(gamer, map.levels[1]["mane_1"]):          
-        x_change_gamer()
+    if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer, map.levels[1]["mane_1"]) or collide_player_rects(gamer,  map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) or collide_player_rects(gamer, map.levels[1]["trap"]) or show_bridge == True and collide_player_rects(gamer,  map.levels[1]["bridge_1"]):
+        xy_change_gamer()
 
-    if collide_player_rects(gamer,  map.levels[1]["bridge_1"]):
-        x_change_gamer() 
-    
-    if collide_player_rects(gamer,  map.levels[1]["mane_2"]):
-        x_change_gamer()   
-
-    if collide_player_rects(gamer, map.levels[1]["bridge_2"]):
-        x_change_gamer() 
-
-    for i in range (5) :
+    for _ in range (5) :
         gamer.y += 1
-    
-    if keys[pygame.K_SPACE] and collide_player_rects(gamer,  map.levels[1]["wall"]):
-        space_xy()
                     
     if space_power_2 == True and  keys[pygame.K_SPACE] and collide_player_rects(gamer, map.levels[1]["mane_1"]) and 1024 < gamer.x and 1050 > gamer.x :
-        gamer.x += 0
         gamer.y += -100
-        x_change = 0
         y_change = -100 
-
         space_power_2 = False
 
     if space_power_3 == True and  keys[pygame.K_SPACE] and collide_player_rects(gamer,  map.levels[1]["mane_2"]) and 50 < gamer.x and 100 > gamer.x and direction == "right":
@@ -172,37 +157,18 @@ while game:
         x_change = 75
         y_change = -75
 
-    if keys[pygame.K_SPACE] and collide_player_rects(gamer, map.levels[1]["mane_1"]):
-        space_xy()
-
-    if keys[pygame.K_SPACE] and collide_player_rects(gamer, map.levels[1]["mane_2"]):
-        space_xy()
-
-    if keys[pygame.K_SPACE] and collide_player_rects(gamer, map.levels[1]["bridge_2"]):
-        space_xy()
+    if keys[pygame.K_SPACE] :
+        if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer, map.levels[1]["mane_1"]) or collide_player_rects(gamer, map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) or show_bridge == True and collide_player_rects(gamer, map.levels[1]["bridge_1"]) :
+            space_xy()
       
     if collide_player_rects(gamer,  map.levels[1]["mane_1"]) and gamer.x >= 950 :
         show_bridge = True
 
     if show_bridge == True :
         map.draw_rects(display, 1, "bridge_1")
-        if keys[pygame.K_SPACE] and collide_player_rects(gamer, map.levels[1]["bridge_1"]):
-            space_xy()
 
-    if collide_player_rects(gamer,  map.levels[1]["wall"]):
-        not_gravity()
-
-    if collide_player_rects(gamer,  map.levels[1]["mane_1"]):
-        not_gravity()
-
-    if show_bridge == True and collide_player_rects(gamer,  map.levels[1]["bridge_1"]):
-        not_gravity()
-
-    if collide_player_rects(gamer,  map.levels[1]["mane_2"]):
-        not_gravity()
-
-    if collide_player_rects(gamer,  map.levels[1]["bridge_2"]):
-        not_gravity()    
+    if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer, map.levels[1]["mane_1"]) or collide_player_rects(gamer, map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) or show_bridge == True and collide_player_rects(gamer,  map.levels[1]["bridge_1"]):
+        not_gravity()   
 
     if collide_player_coins(gamer,  coins):
         score_number += 1
@@ -218,12 +184,8 @@ while game:
         Trap_Ammo_x = 125
 
     if gamer.y > 500 and keys[pygame.K_SPACE]:
-        pygame.time.wait(50)
-        for i in range (40) :
-            gamer.x += 0
-            gamer.y += -1
-
-            x_change = 0
+        for _ in range (40) :
+            gamer.y -= 1
             y_change = -1
 
     if collide_player_rects(gamer,  Trap_Ammo) :
@@ -264,8 +226,7 @@ while game:
 
     pygame.display.update()
     if not game and event.type != pygame.QUIT:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game = False
-        
-    clock.tick(50)    
+        pygame.time.wait(2000)
+        game = False
+
+    clock.tick(50)
