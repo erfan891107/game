@@ -17,6 +17,7 @@ font = pygame.font.Font("pixel_font/upheavtt.ttf", 60)
 write_score = font.render((f"SCORE:0"), True, WHITE)
 
 gamer = Rect ([x, y, 25, 25])
+Background_map = Rect ([0, 0, 1200, 600])
 coins = [Rect([850, 165, 25, 25])]
 gun_trap = Rect ([55, 520, 100, 25])
 finish_level_1 = Rect ([1075, 396, 60, 60])
@@ -38,6 +39,9 @@ show_bridge = False
 class_hint_show = False
 gameover = False
 game = True
+
+Background = pygame.image.load("map.PNG")
+Background = pygame.transform.scale(Background,(1200, 600))
 
 score = pygame.image.load("score.PNG")
 score = pygame.transform.scale(score,(25, 25))
@@ -191,15 +195,16 @@ while game:
     if collide_player_rects(gamer,  Trap_Ammo) :
         gameover = True
 
-    map.draw_rects(display, 1, "wall")
-    map.draw_rects(display, 1, "mane_1")
-    map.draw_rects(display, 1, "mane_2")
-    map.draw_rects(display, 1, "bridge_2")
+    #map.draw_rects(display, 1, "wall")
+    #map.draw_rects(display, 1, "mane_1")
+    #map.draw_rects(display, 1, "mane_2")
+    #map.draw_rects(display, 1, "bridge_2")
 
     for mane in Trap_Ammo :
         pygame.draw.rect(display, RED, [mane.x, mane.y, mane.width, mane.height])  
     display.blit(write_score,(5, -10)) 
     display.blit(player, [gamer.x, gamer.y])
+    display.blit(Background, [Background_map.x, Background_map.y])
     for c in coins:
         display.blit(score, [c.x, c.y])
     display.blit(trap, [gun_trap.x, gun_trap.y])
