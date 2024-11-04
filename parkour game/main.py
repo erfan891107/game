@@ -1,4 +1,4 @@
-import pygame
+import pygame, time, math, random, sys
 from map_game import map
 from pygame.locals import Rect
 pygame.init()
@@ -18,6 +18,7 @@ write_score = font.render((f"SCORE:0"), True, WHITE)
 
 gamer = Rect ([x, y, 25, 25])
 Background_map = Rect ([0, 0, 1200, 600])
+bridge_map =  Rect ([950, 100, 100, 25])
 coins = [Rect([850, 165, 25, 25])]
 gun_trap = Rect ([55, 520, 100, 25])
 finish_level_1 = Rect ([1075, 396, 60, 60])
@@ -27,7 +28,6 @@ clock = pygame.time.Clock()
 x_change, y_change = 0, 0
 score_number = 0
 wait_time = 0
-x, y = 0, 0
 
 Trap_Ammo_x = 125
 Trap_Ammo = [Rect ([Trap_Ammo_x, 500, 10, 5])]
@@ -40,8 +40,11 @@ class_hint_show = False
 gameover = False
 game = True
 
-Background = pygame.image.load("map.PNG")
+Background = pygame.image.load("map.jpg")
 Background = pygame.transform.scale(Background,(1200, 600))
+
+bridge = pygame.image.load("bridge.jpg")
+bridge = pygame.transform.scale(bridge,(100, 25))
 
 score = pygame.image.load("score.PNG")
 score = pygame.transform.scale(score,(25, 25))
@@ -84,18 +87,39 @@ def not_gravity():
     for _ in range (5) :
         gamer.y -= 1
 
-def space_xy():
-    for _ in range (30) :
-        gamer.x += 0
-        gamer.y += -1
+# def space_xy():
+#     for _ in range (30) :
+#         gamer.x += 0
+#         gamer.y += -1
 
-        x_change = 0
-        y_change = -1
+#         x_change = 0
+#         y_change = -1
+
+
+def __init__(gamer, x, y):
+    gamer.x = x
+    gamer.y = y
+    gamer.isJump = False
+    gamer.jumpCount = 10
+
+def jump(gamer):
+    if gamer.isJump:
+        print("Hi")
+        if gamer.jumpCount >= -10:
+            neg = 1
+            if gamer.jumpCount < 0:
+                neg = -1
+            gamer.y -= gamer.jumpCount**2 * 0.1 * neg
+            gamer.jumpCount -= 1
+        else:
+            gamer.isJump = False
+            gamer.jumpCount = 10
 
 direction = "right"
 
 while game:
     display.fill(BLACK)
+    display.blit(Background, [Background_map.x, Background_map.y])
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -162,14 +186,18 @@ while game:
         y_change = -75
 
     if keys[pygame.K_SPACE] :
-        if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer, map.levels[1]["mane_1"]) or collide_player_rects(gamer, map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) or show_bridge == True and collide_player_rects(gamer, map.levels[1]["bridge_1"]) :
-            space_xy()
+        #if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer, map.levels[1]["mane_1"]) or collide_player_rects(gamer, map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) or show_bridge == True and collide_player_rects(gamer, map.levels[1]["bridge_1"]) :
+        jump.isJump = True
+
+    display.blit(player, [gamer.x, gamer.y])
+        
+    jump(gamer)
       
     if collide_player_rects(gamer,  map.levels[1]["mane_1"]) and gamer.x >= 950 :
         show_bridge = True
 
     if show_bridge == True :
-        map.draw_rects(display, 1, "bridge_1")
+        display.blit(bridge, [bridge_map.x, bridge_map.y])
 
     if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer, map.levels[1]["mane_1"]) or collide_player_rects(gamer, map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) or show_bridge == True and collide_player_rects(gamer,  map.levels[1]["bridge_1"]):
         not_gravity()   
@@ -188,23 +216,17 @@ while game:
         Trap_Ammo_x = 125
 
     if gamer.y > 500 and keys[pygame.K_SPACE]:
-        for _ in range (40) :
-            gamer.y -= 1
-            y_change = -1
+        for _ in range (5) :
+            gamer.y -= 5
+            y_change = -5
 
     if collide_player_rects(gamer,  Trap_Ammo) :
         gameover = True
 
-    #map.draw_rects(display, 1, "wall")
-    #map.draw_rects(display, 1, "mane_1")
-    #map.draw_rects(display, 1, "mane_2")
-    #map.draw_rects(display, 1, "bridge_2")
-
     for mane in Trap_Ammo :
         pygame.draw.rect(display, RED, [mane.x, mane.y, mane.width, mane.height])  
     display.blit(write_score,(5, -10)) 
-    display.blit(player, [gamer.x, gamer.y])
-    display.blit(Background, [Background_map.x, Background_map.y])
+    
     for c in coins:
         display.blit(score, [c.x, c.y])
     display.blit(trap, [gun_trap.x, gun_trap.y])
