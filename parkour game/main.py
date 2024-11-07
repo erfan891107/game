@@ -29,6 +29,7 @@ x_change, y_change = 0, 0
 score_number = 0
 wait_time = 0
 x, y = 0, 0
+jumpCount = 8
 
 Trap_Ammo_x = 125
 Trap_Ammo = [Rect ([Trap_Ammo_x, 500, 10, 5])]
@@ -40,22 +41,16 @@ show_bridge = False
 class_hint_show = False
 gameover = False
 game = True
-
 isJump = False
-jumpCount = 8
 
 Background = pygame.image.load("map.jpg")
 Background = pygame.transform.scale(Background,(1200, 600))
-
 bridge = pygame.image.load("bridge.jpg")
 bridge = pygame.transform.scale(bridge,(100, 25))
-
 score = pygame.image.load("score.PNG")
 score = pygame.transform.scale(score,(25, 25))
-
 trap = pygame.image.load("trap.PNG")
 trap = pygame.transform.scale(trap,(100, 25))
-
 finish = pygame.image.load("finish.PNG")
 finish = pygame.transform.scale(finish,(60, 60))
 
@@ -88,17 +83,7 @@ def xy_change_gamer():
     gamer.y -= y_change
     
 def not_gravity():
-    gamer.y -= 5
-
-def space_xy():
-    for _ in range (30) :
-        gamer.x += 0
-        gamer.y += -1
-
-        x_change = 0
-        y_change = -1
-
-
+    gamer.y -= 2
 
 direction = "right"
 
@@ -156,7 +141,7 @@ while game:
     if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer, map.levels[1]["mane_1"]) or collide_player_rects(gamer,  map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) or collide_player_rects(gamer, map.levels[1]["trap"]) or show_bridge == True and collide_player_rects(gamer,  map.levels[1]["bridge_1"]):
         xy_change_gamer()
 
-    gamer.y += 5
+    gamer.y += 2
                     
     if space_power_2 == True and  keys[pygame.K_SPACE] and collide_player_rects(gamer, map.levels[1]["mane_1"]) and 1024 < gamer.x and 1050 > gamer.x :
         gamer.y += -100
@@ -172,7 +157,7 @@ while game:
     if isJump :
         
         if jumpCount >= -8 :
-            gamer.y -= 5
+            gamer.y -= 2
             neg = 1
             if jumpCount < 0:
                 neg = -1
@@ -183,11 +168,11 @@ while game:
             isJump = False
         
     if keys[pygame.K_SPACE] :
-        
-        #if collide_player_rects(gamer,  map.levels[1]["wall"]) or collide_player_rects(gamer, map.levels[1]["mane_1"]) or collide_player_rects(gamer, map.levels[1]["mane_2"]) or collide_player_rects(gamer, map.levels[1]["bridge_2"]) or show_bridge == True and collide_player_rects(gamer, map.levels[1]["bridge_1"]) :
-        
         isJump = True
-      
+
+    if isJump == False and not collide_player_rects(gamer,  map.levels[1]["wall"]) :
+        gamer.y += 3
+
     if collide_player_rects(gamer,  map.levels[1]["mane_1"]) and gamer.x >= 950 :
         show_bridge = True
 
